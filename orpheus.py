@@ -1,5 +1,16 @@
 #!/usr/bin/env python3
 import sys
+import os
+
+# Add script/application directory to sys.path for imports
+if getattr(sys, 'frozen', False):
+    application_path = os.path.dirname(sys.executable)
+else:
+    application_path = os.path.dirname(os.path.abspath(__file__))
+
+if application_path not in sys.path:
+    sys.path.insert(0, application_path)
+
 # ============================================================================
 # Spotify Decryption Worker Mode (Bypass Core)
 # ============================================================================
@@ -17,7 +28,7 @@ if "--spotify-decrypt-worker" in sys.argv:
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='backslashreplace')
 
-import os
+
 os.environ['PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION'] = 'python'
 
 from utils.vendor_bootstrap import bootstrap_vendor_paths
