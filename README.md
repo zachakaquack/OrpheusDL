@@ -54,13 +54,14 @@ Follow these steps to get a local copy of Orpheus up and running:
    <sub>*(use pip3 on macOS)*</sub>
 
 3. Refresh settings and update certifi:
-   a.
+
+   a. Refresh settings:
    ```shell
    python orpheus.py settings refresh
    ```
    <sub>*(use python3 on macOS)*</sub>
 
-   b.
+   b. Update certifi:
    ```shell
    pip install --upgrade certifi
    ```
