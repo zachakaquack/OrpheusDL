@@ -488,13 +488,36 @@ class Downloader:
                 return False
             jitter = pause_seconds * 0.25
             pause_actual = random.uniform(pause_seconds - jitter, pause_seconds + jitter)
-            self.print(
-                f'Pausing {pause_actual:.0f}s (base {pause_seconds:g}s ±25%) to prevent rate limiting...',
-                drop_level=1,
-            )
-            time.sleep(pause_actual)
+            self._sleep_with_countdown(pause_actual, drop_level=1, with_padding=True)
             return True
         return False
+
+    def _sleep_with_countdown(self, pause_seconds, drop_level=1, with_padding=False):
+        """Sleep with a 1s countdown log updating the pause sentence."""
+        try:
+            pause_seconds = float(pause_seconds)
+        except (TypeError, ValueError):
+            return
+        if pause_seconds <= 0:
+            return
+
+        if with_padding:
+            print()
+
+        end_time = time.time() + pause_seconds
+        last_remaining = None
+        while True:
+            remaining = int(max(0, end_time - time.time()) + 0.999)
+            if remaining <= 0:
+                break
+            if remaining != last_remaining:
+                sec_label = "second" if remaining == 1 else "seconds"
+                self.print(f'Pausing {remaining} {sec_label} to prevent rate limiting...', drop_level=drop_level)
+                last_remaining = remaining
+            time.sleep(min(1.0, max(0.05, end_time - time.time())))
+
+        if with_padding:
+            print()
 
     def _get_status_symbols(self):
         """Get platform-appropriate status symbols with universal colors"""
@@ -1199,8 +1222,7 @@ class Downloader:
                     elif (service_name_lower == 'youtube' and index < number_of_tracks and 
                         download_result is not None and download_result != "RATE_LIMITED" and download_result != "SKIPPED"):
                         pause_seconds = self._get_youtube_pause_seconds()
-                        self.print(f'Pausing {pause_seconds} seconds to prevent rate limiting...', drop_level=1)
-                        time.sleep(pause_seconds)
+                        self._sleep_with_countdown(pause_seconds, drop_level=1, with_padding=True)
                     
                     if download_result == "RATE_LIMITED":
                         logging.info(f"Deferring track {actual_track_id_str_for_download} due to rate limit.")
@@ -1770,9 +1792,7 @@ class Downloader:
                     elif (service_name_lower == 'youtube' and index < number_of_tracks and 
                         download_result is not None and download_result != "RATE_LIMITED" and download_result != "SKIPPED"):
                         pause_seconds = self._get_youtube_pause_seconds()
-                        self.print(f'Pausing {pause_seconds} seconds to prevent rate limiting...', drop_level=1)
-                        time.sleep(pause_seconds)
-                        print()  # Add blank line after pause message for consistent spacing
+                        self._sleep_with_countdown(pause_seconds, drop_level=1, with_padding=True)
                     
                     # Collect rate-limited tracks for retry
                     if download_result == "RATE_LIMITED":
@@ -2096,9 +2116,7 @@ class Downloader:
                     elif (service_name_lower == 'youtube' and index < number_of_tracks_new and 
                         download_result is not None and download_result != "RATE_LIMITED" and download_result != "SKIPPED"):
                         pause_seconds = self._get_youtube_pause_seconds()
-                        self.print(f'Pausing {pause_seconds} seconds to prevent rate limiting...', drop_level=1)
-                        time.sleep(pause_seconds)
-                        print()  # Add blank line after pause message for consistent spacing
+                        self._sleep_with_countdown(pause_seconds, drop_level=1, with_padding=True)
                     
                     # Collect rate-limited tracks for retry
                     if download_result == "RATE_LIMITED":
