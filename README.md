@@ -58,6 +58,8 @@ Follow these steps to get a local copy of Orpheus up and running:
        <sub>*(use python3 on macOS)*</sub><br>
 
 5. Install modules:<br>   
+   Amazon Music:
+   `git clone https://github.com/bascurtiz/orpheusdl-amazonmusic modules/amazonmusic`<br>
    Apple Music:
    `git clone https://github.com/bascurtiz/orpheusdl-applemusic modules/applemusic`<br>
    Beatport:
@@ -129,7 +131,6 @@ loaded module. You'll find the configuration file here: `config/settings.json`
 
 ```json5
 {
-    "discography_format": "{name} {quality}",
     "album_format": "{name}{explicit}",
     "playlist_format": "{name}{explicit}",
     "track_filename_format": "{track_number}. {name}",
@@ -141,18 +142,14 @@ loaded module. You'll find the configuration file here: `config/settings.json`
 
 `track_filename_format`: How tracks are formatted in albums and playlists. The relevant extension is appended to the end.
 
-`discography_format`: Folder structure for albums when downloading an artist or label discography (albums are placed
-under an artist/label folder already). Use `{name}` when `album_format` includes the artist to avoid duplicated paths.
-
 `album_format`, `playlist_format`, `artist_format`: Base directories for their respective formats - tracks and cover
 art are stored here. May have slashes in it, for instance {artist}/{album}.
 
 `single_full_path_format`: How singles are handled, which is separate to how the above work.
 Instead, this has both the folder's name and the track's name.
 
-`enable_zfill`: Zero-pads `track_number`, `total_tracks`, `disc_number`, and `total_discs` in filenames and
-embedded metadata (minimum two digits, e.g. 01–09; wider padding when an album has 100+ tracks). Use
-`{track_number}` or `{disc_number}` in `track_filename_format` for padded filenames.
+`enable_zfill`: Enables zero padding for `track_number`, `total_tracks`, `disc_number`, `total_discs` if the
+corresponding number has more than 2 digits
 
 `force_album_format`: Forces the `album_format` for tracks instead of the `single_full_path_format` and also
 uses `album_format` in the `playlist_format` folder 
@@ -164,10 +161,8 @@ uses `album_format` in the `playlist_format` folder
 `{total_tracks}`, `{disc_number}`, `{total_discs}`, `{release_date}`, `{release_year}`, `{artist_id}`, `{isrc}`,
 `{upc}`, `{explicit}`, `{copyright}`, `{codec}`, `{sample_rate}`, `{bit_depth}`.
 
-`discography_format` uses the same variables as `album_format`.
-
 `album_format` variables are `{name}`, `{id}`, `{artist}`, `{artist_id}`, `{release_year}`, `{upc}`, `{explicit}`,
-`{quality}`, `{artist_initials}`, `{album_artist}`.
+`{quality}`, `{artist_initials}`.
 
 `playlist_format` variables are `{name}`, `{creator}`, `{tracks}`, `{release_year}`, `{explicit}`, `{creator_id}`
 
